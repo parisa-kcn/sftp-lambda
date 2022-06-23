@@ -51,7 +51,7 @@ Resources:
         SFTPSchedule:
           Type: Schedule 
           Properties:
-            Schedule: cron(0 4 * * ? *) # Run at midnight EST (Cloudwatch uses GMT)
+            Schedule: cron(10 * * * ? *) # Run at every 10 min (Cloudwatch uses GMT)
             Description: Runs sftp-lambda handler daily
             Enabled: True
             Input:  !Sub | 
