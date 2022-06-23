@@ -5,6 +5,7 @@ import os
 import logging
 import fnmatch
 from stat import S_ISDIR, S_ISREG
+from datetime import datetime
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -19,7 +20,9 @@ def lambda_handler(event, context):
     #bucket_name = event.get('TargetBucketName')
     bucket_name = 'optus-development-dev-oft-gateway'
     
-    
+    d1  = datetime.today().strftime('%Y-%m-%d-%H')
+    log.debug('d1 : ' + d1)
+   
     #log.debug('bucketName=== {}'.format(bucket_name))
    # s3_client = boto3.client(service_name='s3')
     
@@ -32,8 +35,13 @@ def lambda_handler(event, context):
     s3 = boto3.resource('s3')
     my_bucket = s3.Bucket(bucket_name)
 
+    inProcessFile = 'prepaid-sales/digital-orders' + '-d1' 
+    
     for object_summary in my_bucket.objects.filter(Prefix="prepaid-sales/digital-orders"):
-     print(object_summary.key)
+     if (bject_summary.key == inProcessFile):
+      print(object_summary.key)
+     else:
+      print('bot found')
     
    
    
