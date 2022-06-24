@@ -1,6 +1,6 @@
 import boto3
 import json
-#import pysftp
+import pysftp
 import os 
 import logging
 import fnmatch
@@ -37,10 +37,28 @@ def lambda_handler(event, context):
 
     inProcessFile = 'prepaid-sales/digital-orders' + '-d1' 
     
+    inProcessExist = False
+    
     for object_summary in my_bucket.objects.filter(Prefix="prepaid-sales/digital-orders"):
      if (object_summary.key == inProcessFile):
-      inProcessExist = true 
+      inProcessExist = True 
     
+    
+    if inProcessExist:
+     print(' there is in progress file')
+    
+     
+    
+    #sftp_host = event.get('SftpHost')
+    sftp_host = 's-ea7d1dab058d48bab.server.transfer.ap-southeast-2.amazonaws.com'
+    
+    #sftp_user = event.get('SftpUser')
+    sftp_user = 'oftp-dev2'
+    
+    #sftp_password_secret_arn = event.get('SftpSecretArn')
+    #sftp_private_key_auth = event.get('SftpPrivateKeyAuth', 'False').lower() == 'true'
+    sftp_private_key_auth = True
+    #sftp_files = event.get('Files')
     
    
    
@@ -64,18 +82,18 @@ def lambda_handler(event, context):
 
     # Fetch the password from Secrets Manager
    # log.info('Fetching Secret: {}'.format(sftp_password_secret_arn))
-#    secretsmanager_client = boto3.client(service_name='secretsmanager')
- #   sftp_password = secretsmanager_client.get_secret_value(SecretId=sftp_password_secret_arn)['SecretString']
+   # secretsmanager_client = boto3.client(service_name='secretsmanager')
+   # sftp_password = secretsmanager_client.get_secret_value(SecretId=sftp_password_secret_arn)['SecretString']
   #  log.info('Retrieved secret')
 
-   # cnOpts = pysftp.CnOpts()
-#    cnOpts.hostkeys = None
- #   log.info('Connecting to SFTP server: {}'.format(sftp_host))    
-  #  if sftp_private_key_auth:
- #      with open("/tmp/private_key", "w") as file:
-  #          file.write(sftp_password)
-  #      sftp = pysftp.Connection(sftp_host, username=sftp_user, private_key='/tmp/private_key', cnopts=cnOpts)
-  #      os.remove('/tmp/private_key')
+    cnOpts = pysftp.CnOpts()
+    cnOpts.hostkeys = None
+    log.info('Connecting to SFTP server: {}'.format(sftp_host))    
+    if sftp_private_key_auth:
+       with open("/tmp/private_key", "w") as file:
+            file.write(sftp_password)
+        sftp = pysftp.Connection(sftp_host, username=sftp_user, private_key='/tmp/private_key', cnopts=cnOpts)
+        os.remove('/tmp/private_key')
   #  else:
   #      sftp = pysftp.Connection(sftp_host, username=sftp_user, password=sftp_password, cnopts=cnOpts)
   #  
