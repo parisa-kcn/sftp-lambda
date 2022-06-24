@@ -38,10 +38,9 @@ def lambda_handler(event, context):
     inProcessFile = 'prepaid-sales/digital-orders' + '-d1' 
     
     for object_summary in my_bucket.objects.filter(Prefix="prepaid-sales/digital-orders"):
-     if (bject_summary.key == inProcessFile):
-      print(object_summary.key)
-     else:
-      print('bot found')
+     if (object_summary.key == inProcessFile):
+      inProcessExist = true 
+    
     
    
    
