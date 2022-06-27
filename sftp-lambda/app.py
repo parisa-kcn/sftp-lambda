@@ -77,16 +77,17 @@ def lambda_handler(event, context):
     #sftp_host = event.get('SftpHost')
     #sftp_user = event.get('SftpUser')
     #sftp_password_secret_arn = event.get('SftpSecretArn')
-    sftp_password_secret_arn = 'dummypass'
+ 
     #sftp_private_key_auth = event.get('SftpPrivateKeyAuth', 'False').lower() == 'true'
     #sftp_files = event.get('Files')
     
 
    # Fetch the password from Secrets Manager
-    log.info('Fetching Secret: {}'.format(get_secret())
+    #log.info('Fetching Secret: {}'.format(getSecret.get_secret())
    # secretsmanager_client = boto3.client(service_name='secretsmanager')
    # sftp_password = secretsmanager_client.get_secret_value(SecretId=sftp_password_secret_arn)['SecretString']
-    sftp_password = get_secret()
+    
+    sftp_password = format(get_secret())
     log.info('Retrieved secret')
 
     cnOpts = pysftp.CnOpts()
@@ -95,6 +96,7 @@ def lambda_handler(event, context):
     if sftp_private_key_auth:
        with open("/tmp/private_key", "w") as file:
             file.write(sftp_password)
+            log.debug(sftp_password)
        sftp = pysftp.Connection(sftp_host, username=sftp_user, private_key='/tmp/private_key', cnopts=cnOpts)
        os.remove('/tmp/private_key')
   #  else:
