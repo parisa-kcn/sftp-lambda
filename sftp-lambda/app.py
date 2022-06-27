@@ -6,6 +6,7 @@ import logging
 import fnmatch
 from stat import S_ISDIR, S_ISREG
 from datetime import datetime
+from getSecret import get_secret
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -82,17 +83,18 @@ def lambda_handler(event, context):
     
 
    # Fetch the password from Secrets Manager
-    log.info('Fetching Secret: {}'.format(sftp_password_secret_arn))
+    log.info('Fetching Secret: {}'.format(get_secret())
    # secretsmanager_client = boto3.client(service_name='secretsmanager')
    # sftp_password = secretsmanager_client.get_secret_value(SecretId=sftp_password_secret_arn)['SecretString']
+    sftp_password = get_secret()
     log.info('Retrieved secret')
 
     cnOpts = pysftp.CnOpts()
     cnOpts.hostkeys = None
     log.info('Connecting to SFTP server: {}'.format(sftp_host))    
     if sftp_private_key_auth:
-       #with open("/tmp/private_key", "w") as file:
-       #     file.write(sftp_password)
+       with open("/tmp/private_key", "w") as file:
+            file.write(sftp_password)
        sftp = pysftp.Connection(sftp_host, username=sftp_user, private_key='/tmp/private_key', cnopts=cnOpts)
        os.remove('/tmp/private_key')
   #  else:
