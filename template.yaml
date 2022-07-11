@@ -24,9 +24,9 @@ Parameters:
     AllowedValues:
       - 'True'
       - 'False'
-  FilesListJSON: 
-    Type: String
-    Description: "JSON formatted list of files. Example: [{'SourceFile': '/path/files/fileprefix-*.txt', 'TargetPath': '/destination/folder' }, {'SourceFile': '/path/otherpath/*', 'TargetPath': '/destination/folder2' }]"
+  #FilesListJSON: 
+   # Type: String
+   #  Description: "JSON formatted list of files. Example: [{'SourceFile': '/path/files/fileprefix-*.txt', 'TargetPath': '/destination/folder' }, {'SourceFile': '/path/otherpath/*', 'TargetPath': '/destination/folder2' }]"
   VPC: 
     Description: The VPC that the Lambda will be placed into
     Type: AWS::EC2::VPC::Id   
@@ -60,9 +60,7 @@ Resources:
                   "SftpUser": "${SftpUser}",
                   "SftpSecretArn": "${SftpPasswordSecret}",
                   "SftpPrivateKeyAuth": "${SftpPrivateKeyAuth}",
-                  "TargetBucketName": "${BucketName}",
-                  "Files":  ${FilesListJSON}
-                
+                  "TargetBucketName": "${BucketName}"
               }
   
 

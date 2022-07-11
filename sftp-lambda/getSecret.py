@@ -1,16 +1,24 @@
 import boto3
+import base64
+import logging
+from botocore.exceptions import ClientError
 def get_secret():
+    
+    logging.basicConfig(level=logging.DEBUG)
+    log = logging.getLogger(__name__)
+    log.setLevel(logging.DEBUG)
 
-    secret_name = "dev-prepaid-sales-oft-client-ssh-key"
+    secret_name = "prepaid-sales-oft-tf-private-key"
     region_name = "ap-southeast-2"
-
+    log.debug('in getSecret')
     # Create a Secrets Manager client
     session = boto3.session.Session()
+    log.debug('after boto')
     client = session.client(
         service_name='secretsmanager',
         region_name=region_name
     )
-
+    log.debug('after client session')
     # In this sample we only handle the specific exceptions for the 'GetSecretValue' API.
     # See https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
     # We rethrow the exception by default.
@@ -19,7 +27,10 @@ def get_secret():
         get_secret_value_response = client.get_secret_value(
             SecretId=secret_name
         )
+        
+        log.debug(get_secret_value_response)
     except ClientError as e:
+        log.error('error'.format(e.response['Error']['Code']))
         if e.response['Error']['Code'] == 'DecryptionFailureException':
             # Secrets Manager can't decrypt the protected secret text using the provided KMS key.
             # Deal with the exception here, and/or rethrow at your discretion.
@@ -47,4 +58,5 @@ def get_secret():
             secret = get_secret_value_response['SecretString']
         else:
             decoded_binary_secret = base64.b64decode(get_secret_value_response['SecretBinary'])
+    log.debug('get_secret_value_response'.format(get_secret_value_response))
     return get_secret_value_response

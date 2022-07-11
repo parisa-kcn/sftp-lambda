@@ -41,18 +41,24 @@ def lambda_handler(event, context):
     s3 = boto3.resource('s3')
     my_bucket = s3.Bucket(bucket_name)
 
-    inProcessFile = 'prepaid-sales/digital-orders' + '-d1' 
+    inProcessFile = 'prepaid-sales/digital-orders/digital-orders-' + d1 + '.txt'
     
     inProcessExist = False
     
+    print('inprocess file'+inProcessFile)
+    
     for object_summary in my_bucket.objects.filter(Prefix="prepaid-sales/digital-orders"):
+     print('object_summary.key'+object_summary.key)
      if (object_summary.key == inProcessFile):
-      inProcessExist = True 
+      inProcessExist = True
+      
     
     
     if inProcessExist:
      print(' there is in progress file')
-    
+    else:
+     print(' there is no in-progress file!!!')
+     
      
     
     #sftp_host = event.get('SftpHost')
