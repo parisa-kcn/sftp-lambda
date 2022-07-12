@@ -20,8 +20,8 @@ log.setLevel(logging.DEBUG)
 def lambda_handler(event, context):
     log.debug(event)
     
-    bucket_name = event.get('TargetBucketName')
-    log.debug('bucket_name from evenet' + str(bucket_name))
+    bucket_name = event.get('BucketName')
+    log.debug('bucket_name from evenet: ' + str(bucket_name))
     bucket_name = 'optus-development-dev-oft-gateway'
     
     d1  = datetime.today().strftime('%Y-%m-%d-%H')
@@ -50,7 +50,10 @@ def lambda_handler(event, context):
     for object_summary in my_bucket.objects.filter(Prefix="prepaid-sales/digital-orders"):
      print('object_summary.key'+object_summary.key)
      if (object_summary.key == inProcessFile):
+      inprocessKey = object_summary.key
       inProcessExist = True
+      fileobj = s3.Object(bucket_name, inprocessKey)
+      fileobj.get()['Body'].read().decode('utf-8') 
       
     
     
@@ -62,28 +65,18 @@ def lambda_handler(event, context):
      
     
     #sftp_host = event.get('SftpHost')
-    sftp_host = 's-ea7d1dab058d48bab.server.transfer.ap-southeast-2.amazonaws.com'
+    sftp_host = 's-b6a2f9bb3b314217b.server.transfer.ap-southeast-2.amazonaws.com'
     
     #sftp_user = event.get('SftpUser')
-    sftp_user = 'oftp-dev2'
+    sftp_user = 'oft-tf'
     
     #sftp_password_secret_arn = event.get('SftpSecretArn')
     #sftp_private_key_auth = event.get('SftpPrivateKeyAuth', 'False').lower() == 'true'
     sftp_private_key_auth = True
-    #sftp_files = event.get('Files')
-    
-   
    
     
     
-    
-    
-   # for my_bucket_object in my_bucket.objects.filter(Prefix="prepaid-sales/digital-orders"):
-    #    print(my_bucket_object.key)
-    
-    
-    
-   
+  
     
     #sftp_host = event.get('SftpHost')
     #sftp_user = event.get('SftpUser')
@@ -116,7 +109,10 @@ def lambda_handler(event, context):
      
        sftp = pysftp.Connection(sftp_host, username=sftp_user, private_key='/tmp/private_key1', cnopts=cnOpts)
        log.debug('connection successful')
+       sftp.cd('/DIGITAL/SALES/OPTUS/PREPAID/SAP/')
+       self.sftp.putfo(fileobj, '/')
        
+ 
     #   sftp = pysftp.Connection(sftp_host, username=sftp_user, private_key='/tmp/oft-tf', cnopts=cnOpts)
     #   os.remove('/tmp/private_key1')
   #  else:
